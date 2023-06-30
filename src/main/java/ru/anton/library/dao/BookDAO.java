@@ -34,9 +34,9 @@ public class BookDAO {
         jdbcTemplate.update("INSERT INTO book (name, author, year) VALUES(?, ?, ?)", book.getName(), book.getAuthor(), book.getYear());
     }
 
-    public void update(int id, Person updatedPerson) {
-        jdbcTemplate.update("UPDATE book SET name=?, year_of_birth=? WHERE person_id=?", updatedPerson.getName(),
-                updatedPerson.getYear_of_birth(), id);
+    public void update(int id, Book updatedBook) {
+        jdbcTemplate.update("UPDATE book SET name=?, author=?, year=? WHERE book_id=?", updatedBook.getName(),
+                updatedBook.getAuthor(), updatedBook.getYear(), id);
     }
 
     public void delete(int id) {
