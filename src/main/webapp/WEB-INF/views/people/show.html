@@ -7,9 +7,26 @@
 <body>
 <p th:text="${person.getName() + ', ' + person.getYear_of_birth()}">VALUE</p>
 
-<p th:text="${person.getPerson_id()}">VALUE</p>
+<p th:text="'id: ' +${person.getPerson_id()}">VALUE</p>
+<br/>
 
-<a th:href="@{/people/{id}/edit(id=${person.getPerson_id()})}">Edit</a>
+<div th:if="${not books.isEmpty()}" th:each="book : ${books}">
+
+    <a th:href="@{/books/{id}(id=${book.getBook_id()})}"
+       th:text="${book.getName() + ', ' + book.getAuthor()  + ', ' + book.getYear()}">user</a>
+</div>
+<!--<h1 th:unless="${books.equals(null)}">User doesn't have any books</h1>-->
+<p th:unless="${books.equals(null)}">User doesn't have any books yet</p>
+<br/>
+<p>
+<a th:href="@{/people}">back to people list</a>
+</p>
+<br/>
+
+
+
+<button type="button" onclick="location.href='@{/people/{id}/edit(id=${person.getPerson_id()})}'">Edit</button>
+
 
 <form th:method="DELETE" th:action="@{/people/{id}(id=${person.getPerson_id()})}">
     <input type="submit" value="Delete"/>
