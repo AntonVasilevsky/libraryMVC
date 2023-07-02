@@ -6,8 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.anton.library.dao.BookDAO;
+import ru.anton.library.dao.PersonDAO;
 import ru.anton.library.models.Book;
-import ru.anton.library.models.Person;
 
 import javax.validation.Valid;
 
@@ -15,9 +15,11 @@ import javax.validation.Valid;
 @RequestMapping("/books")
 public class BooksController {
     private final BookDAO bookDAO;
+    private final PersonDAO personDAO;
     @Autowired
-    public BooksController(BookDAO bookDAO) {
+    public BooksController(BookDAO bookDAO, PersonDAO personDAO) {
         this.bookDAO = bookDAO;
+        this.personDAO = personDAO;
     }
 
     @GetMapping("")
@@ -26,8 +28,10 @@ public class BooksController {
         return "/books/index";
     }
     @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id, Model model) {
-        model.addAttribute("book", bookDAO.show(id));
+    public String show(@PathVariable("id") int id, Model modelBook, Model modelPerson) {
+        modelBook.addAttribute("book", bookDAO.show(id));
+
+        modelPerson.addAttribute("person", personDAO.showId(bookDAO.show(id).getPerson_id()));
         return "books/show";
     }
 
@@ -49,6 +53,11 @@ public class BooksController {
     public String edit(Model model, @PathVariable("id") int id) {
         model.addAttribute("book", bookDAO.show(id));
         return "books/edit";
+    }
+    @PostMapping("/{id}")
+    public String returnBook(@PathVariable("id") int book_id){
+        bookDAO.returnBook(book_id);
+        return "redirect:"+ book_id;
     }
 
     @PatchMapping("/{id}")

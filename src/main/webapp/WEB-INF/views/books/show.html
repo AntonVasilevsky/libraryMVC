@@ -5,14 +5,27 @@
     <title>Show</title>
 </head>
 <body>
-<p th:text="${book.getName() + ', ' + book.getYear()}">VALUE</p>
+<p th:text="${book.getName() + ', ' + book.getAuthor() + ', ' + book.getYear()}">VALUE</p>
 
-<p th:text="${book.getBook_id()}">VALUE</p>
+
+
+<br/>
+<p th:if="${person.getName().equals('Library')}" >This book is available</p>
+<p th:unless="${person.getName().equals('Library')}" th:text="${person.getName() + ' holds this book now.' }">VALUE</p>
+<form th:method="post" th:action="@{/books/{id}(id=${book.getBook_id()})}" >
+    <input type="hidden" name="book_id" th:value="${book.getBook_id()}" />
+    <button type="submit">Return Book</button>
+</form>
+
 
 <a th:href="@{/books/{id}/edit(id=${book.getBook_id()})}">Edit</a>
 
 <form th:method="DELETE" th:action="@{/books/{id}(id=${book.getBook_id()})}">
     <input type="submit" value="Delete"/>
 </form>
+<br/>
+<p>
+    <a th:href="@{/books}">back to books list</a>
+</p>
 </body>
 </html>

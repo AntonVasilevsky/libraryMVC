@@ -10,13 +10,14 @@
 <p th:text="'id: ' +${person.getPerson_id()}">VALUE</p>
 <br/>
 
-<div th:if="${not books.isEmpty()}" th:each="book : ${books}">
 
+<div th:if="${not books.isEmpty()}" th:each="book : ${books}">
     <a th:href="@{/books/{id}(id=${book.getBook_id()})}"
        th:text="${book.getName() + ', ' + book.getAuthor()  + ', ' + book.getYear()}">user</a>
 </div>
-<!--<h1 th:unless="${books.equals(null)}">User doesn't have any books</h1>-->
-<p th:unless="${books.equals(null)}">User doesn't have any books yet</p>
+
+<p th:unless="${not books.isEmpty()}">User doesn't have any books yet</p>
+
 <br/>
 <p>
 <a th:href="@{/people}">back to people list</a>

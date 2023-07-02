@@ -12,6 +12,7 @@ import java.util.List;
 public class BookDAO {
     private final JdbcTemplate jdbcTemplate;
 
+
     @Autowired
     public BookDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -26,7 +27,7 @@ public class BookDAO {
     }
 
     public Book show(int id) {
-        return jdbcTemplate.query("SELECT * FROM book ORDER BY name WHERE book_id=?", new Object[]{id}, new BeanPropertyRowMapper<>(Book.class))
+        return jdbcTemplate.query("SELECT * FROM book WHERE book_id=?", new Object[]{id}, new BeanPropertyRowMapper<>(Book.class))
                 .stream().findAny().orElse(null);
     }
     public List<Book> showId(int id) {
@@ -41,8 +42,11 @@ public class BookDAO {
         jdbcTemplate.update("UPDATE book SET name=?, author=?, year=? WHERE book_id=?", updatedBook.getName(),
                 updatedBook.getAuthor(), updatedBook.getYear(), id);
     }
+    public void returnBook(int book_id){
+        jdbcTemplate.update("UPDATE book SET person_id=? WHERE book_id=?", 1, book_id);
+    }
 
     public void delete(int id) {
-        jdbcTemplate.update("DELETE FROM Person WHERE person_id=?", id);
+        jdbcTemplate.update("DELETE FROM Book WHERE book_id=?", id);
     }
 }
