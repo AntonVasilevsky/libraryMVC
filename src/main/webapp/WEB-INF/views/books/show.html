@@ -5,17 +5,39 @@
     <title>Show</title>
 </head>
 <body>
-<p th:text="${book.getName() + ', ' + book.getAuthor() + ', ' + book.getYear()}">VALUE</p>
+<p th:text="${book.getName() + ', ' + book.getAuthor() + ', ' + book.getYear()}"
+   style="font-size: 35px; font-weight: bold;" >VALUE</p>
 
 
 
 <br/>
-<p th:if="${person.getName().equals('Library')}" >This book is available</p>
-<p th:unless="${person.getName().equals('Library')}" th:text="${person.getName() + ' holds this book now.' }">VALUE</p>
-<form th:method="post" th:action="@{/books/{id}(id=${book.getBook_id()})}" >
+
+<p th:if="${person.getName().equals('Library')}" >This book is available
+
+</p>
+<br/>
+
+<form th:if="${person.getName().equals('Library')}" th:action="@{/books/{id}/set-person(id=${book.getBook_id()})}" method="post">
+    <select name="selectedId">
+        <option th:each="person : ${people}" th:value="${person.getPerson_id()}" th:text="${person.name}"></option>
+    </select>
+    <button type="submit">Set to user</button>
+</form>
+
+<a th:unless="${person.getName().equals('Library')}" th:href="@{/user/{id}(id=${person.getPerson_id()})}">
+    <span th:text="${person.getName()}"></span>
+</a>
+<span> holds this book now.</span>
+
+
+<!--<p th:unless="${person.getName().equals('Library')}" th:text="${person.getName() + ' holds this book now.' }">VALUE-->
+    <br/>
+<p>
+<form th:unless="${person.getName().equals('Library')}" th:method="post" th:action="@{/books/{id}/return(id=${book.getBook_id()})}" >
     <input type="hidden" name="book_id" th:value="${book.getBook_id()}" />
     <button type="submit">Return Book</button>
 </form>
+</p>
 
 
 <a th:href="@{/books/{id}/edit(id=${book.getBook_id()})}">Edit</a>

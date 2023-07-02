@@ -54,6 +54,6 @@ public class Person {
 
     @Override
     public String toString() {
-        return "Person's name: " + name + " year: " + year_of_birth + "id = "+ person_id;
+        return  name + ", " + year_of_birth;
     }
 }

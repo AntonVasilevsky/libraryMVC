@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.anton.library.dao.BookDAO;
 import ru.anton.library.dao.PersonDAO;
 import ru.anton.library.models.Book;
+import ru.anton.library.models.Person;
 
 import javax.validation.Valid;
 
@@ -30,7 +31,7 @@ public class BooksController {
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model modelBook, Model modelPerson) {
         modelBook.addAttribute("book", bookDAO.show(id));
-
+        modelPerson.addAttribute("people", personDAO.index());
         modelPerson.addAttribute("person", personDAO.showId(bookDAO.show(id).getPerson_id()));
         return "books/show";
     }
@@ -54,10 +55,15 @@ public class BooksController {
         model.addAttribute("book", bookDAO.show(id));
         return "books/edit";
     }
-    @PostMapping("/{id}")
+    @PostMapping("/{id}/return")
     public String returnBook(@PathVariable("id") int book_id){
         bookDAO.returnBook(book_id);
-        return "redirect:"+ book_id;
+        return "redirect:/books/"+ book_id;
+    }
+    @PostMapping("/{id}/set-person")
+    public String setPersonIdToBook(@PathVariable("id") int book_id, @RequestParam("selectedId") int person_id){
+        bookDAO.setPersonIdToBook(book_id, person_id);
+        return "redirect:/books/"+ book_id;
     }
 
     @PatchMapping("/{id}")
