@@ -12,7 +12,7 @@ public class Person {
     private String name;
 
     @Min(value = 1913, message = "Year should be greater than 1913")
-    @Max(value = 2023, message = "Year should be greater than 2023")
+
     private int year_of_birth;
 
 

@@ -1,10 +1,19 @@
 package ru.anton.library.models;
-// навигация по ключам в бд??
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotEmpty;
+import java.util.Calendar;
+
+
 public class Book {
+    private final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
     private int book_id;
     private int person_id;
+    @NotEmpty(message = "Name should not be empty")
     private String name;
+    @NotEmpty(message = "Name should not be empty")
     private String author;
+    //@Max(CURRENT_YEAR)
     private int year;
 
     public Book() {

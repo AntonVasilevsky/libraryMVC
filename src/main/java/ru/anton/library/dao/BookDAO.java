@@ -8,6 +8,9 @@ import ru.anton.library.models.Book;
 import ru.anton.library.models.Person;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 @Component
 public class BookDAO {
     private final JdbcTemplate jdbcTemplate;
@@ -21,16 +24,16 @@ public class BookDAO {
     public List<Book> index() {
 
         List<Book> books = jdbcTemplate.query("SELECT * FROM book ORDER BY name", new BeanPropertyRowMapper<>(Book.class));
-        //books.forEach(System.out::println);
+
         return books;
 
     }
 
-    public Book show(int id) {
+    public Optional<Book> show(int id) {
         return jdbcTemplate.query("SELECT * FROM book WHERE book_id=?", new Object[]{id}, new BeanPropertyRowMapper<>(Book.class))
-                .stream().findAny().orElse(null);
+                .stream().findAny();
     }
-    public List<Book> showId(int id) {
+    public List<Book> showPersonId(int id) {
         return jdbcTemplate.query("SELECT * FROM book  WHERE person_id=? ORDER BY name", new Object[]{id}, new BeanPropertyRowMapper<>(Book.class));
     }
 
@@ -46,7 +49,7 @@ public class BookDAO {
         jdbcTemplate.update("UPDATE book SET person_id=? WHERE book_id=?", 1, book_id);
     }
     public void setPersonIdToBook(int book_id, int person_id){
-        System.out.println("!!!!!!!!!!!!!!! "+person_id);
+
         jdbcTemplate.update("UPDATE book SET person_id=? WHERE book_id=?", person_id, book_id);
     }
 

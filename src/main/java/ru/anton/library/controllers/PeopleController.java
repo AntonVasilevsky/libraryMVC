@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.anton.library.dao.BookDAO;
 import ru.anton.library.dao.PersonDAO;
 import ru.anton.library.models.Person;
+import ru.anton.library.util.PersonValidator;
 
 import javax.validation.Valid;
+import java.util.NoSuchElementException;
 
 
 @Controller
@@ -18,11 +20,13 @@ public class PeopleController {
 
     private final PersonDAO personDAO;
     private final BookDAO bookDAO;
+    private final PersonValidator personValidator;
 
     @Autowired
-    public PeopleController(PersonDAO personDAO, BookDAO bookDAO) {
+    public PeopleController(PersonDAO personDAO, BookDAO bookDAO, PersonValidator personValidator) {
         this.personDAO = personDAO;
         this.bookDAO = bookDAO;
+        this.personValidator = personValidator;
     }
 
     @GetMapping("")
@@ -33,8 +37,10 @@ public class PeopleController {
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model modelPerson, Model modelBook) {
-        modelPerson.addAttribute("person", personDAO.show(id));
-        modelBook.addAttribute("books", bookDAO.showId(id));
+        Person person = personDAO.show(id).orElseThrow(NoSuchElementException::new);
+
+        modelPerson.addAttribute("person", personDAO.show(id).orElseThrow(NoSuchElementException::new));
+        modelBook.addAttribute("books", bookDAO.showPersonId(id));
         return "people/show";
     }
 
@@ -46,6 +52,7 @@ public class PeopleController {
     @PostMapping()
     public String create(@ModelAttribute("person") @Valid Person person,
                          BindingResult bindingResult) {
+        personValidator.validate(person, bindingResult);
         if (bindingResult.hasErrors())
             return "people/new";
 
@@ -55,13 +62,17 @@ public class PeopleController {
 
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
-        model.addAttribute("person", personDAO.show(id));
+
+        Person person = personDAO.show(id).orElseThrow(NoSuchElementException::new);
+
+        model.addAttribute("person", person);
         return "people/edit";
     }
 
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult,
                          @PathVariable("id") int id) {
+        personValidator.validate(person, bindingResult);
         if (bindingResult.hasErrors())
             return "people/edit";
 

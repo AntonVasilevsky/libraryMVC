@@ -26,7 +26,10 @@
 
 
 
-<button type="button" onclick="location.href='@{/people/{id}/edit(id=${person.getPerson_id()})}'">Edit</button>
+
+<a th:href="@{/people/{id}/edit(id=${person.getPerson_id()})}">
+    <button type="button">Edit</button>
+</a>
 
 
 <form th:method="DELETE" th:action="@{/people/{id}(id=${person.getPerson_id()})}">

@@ -9,18 +9,22 @@ import ru.anton.library.dao.BookDAO;
 import ru.anton.library.dao.PersonDAO;
 import ru.anton.library.models.Book;
 import ru.anton.library.models.Person;
+import ru.anton.library.util.BookValidator;
 
 import javax.validation.Valid;
+import java.util.NoSuchElementException;
 
 @Controller
 @RequestMapping("/books")
 public class BooksController {
     private final BookDAO bookDAO;
     private final PersonDAO personDAO;
+    private final BookValidator bookValidator;
     @Autowired
-    public BooksController(BookDAO bookDAO, PersonDAO personDAO) {
+    public BooksController(BookDAO bookDAO, PersonDAO personDAO, BookValidator bookValidator) {
         this.bookDAO = bookDAO;
         this.personDAO = personDAO;
+        this.bookValidator = bookValidator;
     }
 
     @GetMapping("")
@@ -30,9 +34,13 @@ public class BooksController {
     }
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model modelBook, Model modelPerson) {
-        modelBook.addAttribute("book", bookDAO.show(id));
+
+        Book book = bookDAO.show(id).orElseThrow(NoSuchElementException::new);
+        Person person = personDAO.show(book.getPerson_id()).orElseThrow(NoSuchElementException::new);
+        modelBook.addAttribute("book", book);
         modelPerson.addAttribute("people", personDAO.index());
-        modelPerson.addAttribute("person", personDAO.showId(bookDAO.show(id).getPerson_id()));
+        modelPerson.addAttribute("person", person);
+       // modelPerson.addAttribute("person", personDAO.show(bookDAO.show(id).map(Book::getPerson_id).orElseThrow(NoSuchElementException::new)));
         return "books/show";
     }
 
@@ -44,6 +52,7 @@ public class BooksController {
     @PostMapping()
     public String create(@ModelAttribute("book") @Valid Book book,
                          BindingResult bindingResult) {
+        bookValidator.validate(book, bindingResult);
         if (bindingResult.hasErrors())
             return "books/new";
 
@@ -52,7 +61,7 @@ public class BooksController {
     }
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
-        model.addAttribute("book", bookDAO.show(id));
+        model.addAttribute("book", bookDAO.show(id).orElseThrow(NoSuchElementException::new));
         return "books/edit";
     }
     @PostMapping("/{id}/return")
@@ -69,6 +78,7 @@ public class BooksController {
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult,
                          @PathVariable("id") int id) {
+        bookValidator.validate(book, bindingResult);
         if (bindingResult.hasErrors())
             return "books/edit";
 
